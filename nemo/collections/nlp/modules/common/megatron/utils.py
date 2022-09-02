@@ -25,7 +25,7 @@ try:
     from apex.transformer.enums import AttnMaskType
     from apex.transformer.pipeline_parallel.schedules.common import listify_model
     from apex.transformer.tensor_parallel.layers import linear_with_grad_accumulation_and_async_allreduce
-    from apex.contrib.layer_norm.layer_norm import FastLayerNorm
+    # from apex.contrib.layer_norm.layer_norm import FastLayerNorm
 
     HAVE_APEX = True
 except (ImportError, ModuleNotFoundError):
@@ -318,7 +318,8 @@ def get_params_for_weight_decay_optimization(
     no_weight_decay_params = {'params': [], 'weight_decay': 0.0}
     for module in modules:
         for module_ in module.modules():
-            if isinstance(module_, (FusedLayerNorm, FastLayerNorm)):
+            # if isinstance(module_, (FusedLayerNorm, FastLayerNorm)):
+            if isinstance(module_, (FusedLayerNorm)):
                 no_weight_decay_params['params'].extend(
                     [p for p in list(module_._parameters.values()) if p is not None]
                 )

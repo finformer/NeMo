@@ -173,14 +173,16 @@ class MegatronLMEncoderDecoderModel(MegatronBaseModel):
 
         if parallel_state.get_pipeline_model_parallel_world_size() > 1 and self.cfg.encoder.arch == 'perceiver':
             raise ValueError(f"Perceivers with pipeline parallel > 1 is not supported yet.")
-
+        
         if not hasattr(self.cfg, 'embedding_init_method_std'):
-            embedding_init_method_std = self.cfg.encoder.init_method_std
+            #embedding_init_method_std = self.cfg.encoder.init_method_std
+            embedding_init_method_std = 0.2
         else:
             embedding_init_method_std = self.cfg.embedding_init_method_std
 
         if not hasattr(self.cfg, 'embedding_dropout'):
-            embedding_dropout = self.cfg.encoder.hidden_dropout
+            #embedding_dropout = self.cfg.encoder.hidden_dropout
+            embedding_dropout = 0.1 
         else:
             embedding_dropout = self.cfg.embedding_dropout
 

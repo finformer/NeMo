@@ -6,15 +6,15 @@ trainer:
   precision: 16 # 16, 32, or bf16
 
 data:
-  test_ds: ???
+  test_ds: [/workspace/datadrive/squad/v2.0/squad_test.jsonl]
   num_workers: 1
-  global_batch_size: 8
-  micro_batch_size: 8
+  global_batch_size: 512
+  micro_batch_size: 64
   
 tensor_model_parallel_size: 1
 pipeline_model_parallel_size: 1
 pipeline_model_parallel_split_rank: 0 # used for encoder and decoder model
-pretrained_language_model_file: ???  # path to a pretrained T5 nemo file 
-virtual_prompt_model_file: ??? # path to a MegatronT5PromptLearningModel nemo file
+pretrained_language_model_file: /workspace/datadrive/t5.nemo  # path to a pretrained T5 nemo file 
+virtual_prompt_model_file: /workspace/datadrive/p_tuning_squad_t5.nemo # path to a MegatronT5PromptLearningModel nemo file
 
 

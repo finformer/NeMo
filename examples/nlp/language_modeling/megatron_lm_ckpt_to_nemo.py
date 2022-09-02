@@ -45,6 +45,7 @@ from pytorch_lightning.utilities.cloud_io import load as pl_load
 from pytorch_lightning.utilities.migration import pl_legacy_patch
 
 from nemo.collections.nlp.models.language_modeling.megatron_bert_model import MegatronBertModel
+from nemo.collections.nlp.models.language_modeling.megatron_t5_model import MegatronT5Model
 from nemo.collections.nlp.models.language_modeling.megatron_gpt_model import MegatronGPTModel
 from nemo.collections.nlp.parts.nlp_overrides import NLPSaveRestoreConnector
 from nemo.utils import AppState, logging
@@ -416,6 +417,21 @@ def convert(local_rank, rank, world_size, args):
             translator=name_translate,
             strict=False,
         )
+    elif args.model_type == 't5':
+        ## this dictionary is used to rename the model parameters
+        name_translate = {}
+        name_translate['transformer'] = 'encoder'
+        name_translate['.attention.'] = '.self_attention.'
+        # nemo megatron doesn't have _for_head key
+        name_translate['word_embeddings_for_head'] = 'word_embeddings'
+        checkpoint, consumed, steps, version = load_from_checkpoint(
+            MegatronT5Model,
+            checkpoint_path,
+            hparams_file=args.hparams_file,
+            trainer=trainer,
+            translator=name_translate,
+            strict=False,
+        )
     else:
         raise NotImplemented("{} is not supported".format(args.model_type))
 
@@ -446,6 +462,8 @@ def convert(local_rank, rank, world_size, args):
             model = load_model(MegatronGPTModel, checkpoint, strict=False, trainer=trainer)
         elif args.model_type == 'bert':
             model = load_model(MegatronBertModel, checkpoint, strict=False, trainer=trainer)
+        elif args.model_type == 't5':
+            model = load_model(MegatronT5Model, checkpoint, strict=False, trainer=trainer)
         else:
             raise NotImplemented("{} is not supported".format(args.model_type))
 
